@@ -1,0 +1,274 @@
+\documentclass[11pt]{article}
+\usepackage{../econpset}
+
+\begin{document}
+\psetheader{Problem Set 1}{Econometrics}{Code: \url{https://github.com/ae4292/Econometrics_PSets}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\problem{1}
+
+\subq{(a)}
+$f_{YA}(y,a)=\tfrac14$. With $Y=A\sqrt L$, the Jacobian of the inverse transformation $g^{-1}(A,L)=(Y,A)$ is
+\[
+J=\begin{pmatrix}\dfrac{\partial A}{\partial A} & \dfrac{\partial A}{\partial L}\\[2mm]
+\dfrac{\partial Y}{\partial A} & \dfrac{\partial Y}{\partial L}\end{pmatrix}
+=\begin{pmatrix}1 & 0\\ \sqrt{L} & \dfrac{A}{2\sqrt{L}}\end{pmatrix},
+\qquad |J| = \frac{A}{2\sqrt L}.
+\]
+Since $0\le Y\le2$ means $0\le A\sqrt L\le2$,
+\ans{$f_{AL}(A,L)=f_{YA}(g^{-1}(A,L))\,|J|=\dfrac{A}{8\sqrt L},\qquad 0\le A\le2,\quad 0\le L\le\left(\dfrac2A\right)^{2}$}
+
+\subq{(b)}
+The causal effect is $\partial Y/\partial L=A/(2\sqrt L)$, which is $A/2$ at $L=1$. The ACE averages this conditional on $L$. At $L=1$, $f_L(1)=\int_0^2\frac A8\,dA=\frac14$, so $f_{A|L}(A\mid1)=\frac{A/8}{1/4}=\frac A2$ and $\E(A\mid L=1)=\int_0^2A\cdot\frac A2\,dA=\frac43$. Therefore
+\ans{$\mathrm{ACE}(L=1)=\tfrac12\,\E(A\mid L=1)=\dfrac23$}
+
+\subq{(c)}
+$A\le2$ and $A\le2/\sqrt L$ must both hold, so integrating out $A$ over $[0,\min(2,2/\sqrt L)]$ gives
+\[
+f_L(L)=\begin{cases}\dfrac{1}{4\sqrt L}, & L\le1,\\[3mm] \dfrac{1}{4L^{3/2}}, & L>1,\end{cases}
+\]
+\[
+\E(A\mid L)=\frac1{f_L(L)}\int_0^{\min(2,2/\sqrt L)}\frac{A^2}{8\sqrt L}\,dA=\begin{cases}\dfrac43, & L\le1,\\[3mm]\dfrac{4}{3\sqrt L}, & L>1.\end{cases}
+\]
+Since $\E(Y\mid L)=\sqrt L\,\E(A\mid L)$,
+\ans{$\E(Y\mid L)=\begin{cases}\tfrac43\sqrt L, & L\le1,\\[1mm] \tfrac43, & L>1.\end{cases}$}
+so $\frac{d}{dL}\E(Y\mid L)$ is $\frac23$ at $L=1$ from the left and $0$ from the right.
+
+\textbf{Comparison with (b).} For $L\le1$ the slope of the CEF equals the ACE, because $f_{A|L}=A/2$ does not depend on $L$. For $L>1$ the support of $A\mid L$ is $[0,2/\sqrt L]$, which depends on $L$, so the slope of the CEF is not the ACE.
+
+\subq{(d)}
+$b=\Cov(Y,L)/\Var(L)$ requires $L$ to have finite variance, but
+\[
+\E(L)=\E(Y^2)\,\E(A^{-2})=\frac43\int_0^2\frac12a^{-2}\,da=\infty,\qquad
+\E(L^2)=\E(Y^4)\E(A^{-4})=\infty .
+\]
+So $\E(Y-a-bL)^2=\infty$ for every $b\neq0$, and the minimum is at $b=0$:
+\ans{$b=0,\qquad a=\E(Y)=1$}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\problem{2}
+
+\subq{(a)}
+\[
+\E(y\mid x)=\E\big(f(x)+x\epsilon\mid x\big)=f(x)+x\,\E(\epsilon\mid x)=f(x)
+\]
+as $\E(\epsilon)=0$ and $x\perp\!\!\!\perp\epsilon$.
+
+\subq{(b)}
+\[
+\Var(y\mid x)=\E(y^2\mid x)-\big(\E(y\mid x)\big)^2,
+\]
+\[
+\begin{aligned}
+\E(y^2\mid x)&=\E\big(f(x)^2+2f(x)x\epsilon+(x\epsilon)^2\mid x\big)\\
+&=f(x)^2+2f(x)x\,\E(\epsilon)+x^2\E(\epsilon^2)=f(x)^2+x^2\cdot1,
+\end{aligned}
+\]
+\[
+\Var(y\mid x)=f(x)^2+x^2-f(x)^2=x^2 .
+\]
+\[
+\mathrm{MSE}=\E\big(\Var(y\mid x)+(\mathrm{Bias})^2\big),\quad\text{bias is zero in this case,}
+\]
+\[
+\mathrm{MSE}=\E\big(\Var(y\mid x)\big)=\E(x^2)=1,\qquad x\sim N(0,1).
+\]
+\ans{$\Var(y\mid x)=x^2,\qquad \mathrm{MSE}_{\mathrm{CEF}}=1$}
+
+\subq{(c)}
+Best linear predictor $\alpha+\beta x$:
+\[
+\alpha=\E(y)-\beta\,\E(x)=\E(y)-\beta\cdot 0=\E(f(x)),\qquad
+\beta=\frac{\Cov(x,y)}{\Var(x)}=\frac{\Cov(x,y)}{1},
+\]
+\[
+\Cov(x,y)=\E(xy)-\E(x)\E(y)=\E(xy)-0,
+\]
+\[
+\E(xy)=\E\big(xf(x)+x^2\epsilon\big)=\E\big(xf(x)\big),\qquad
+xf(x)=\begin{cases}x^2 & x\ge0\\ 0 & x<0\end{cases},\quad P(x\ge0)=\tfrac12,
+\]
+\[
+\E\big(xf(x)\big)=\E\big(x^2\mid x\ge0\big)P(x\ge0)=1\cdot\tfrac12=\tfrac12
+\;\Rightarrow\;\Cov(x,y)=\tfrac12 .
+\]
+\[
+\E\big(f(x)\big)=\int_0^\infty x\cdot\frac1{\sqrt{2\pi}}e^{-x^2/2}\,dx
+=-\frac1{\sqrt{2\pi}}e^{-x^2/2}\Big|_0^\infty=0+\frac1{\sqrt{2\pi}}
+\;\Rightarrow\;\alpha=\frac1{\sqrt{2\pi}} .
+\]
+\ans{$\alpha=\dfrac1{\sqrt{2\pi}},\qquad \beta=\dfrac12$}
+\[
+\mathrm{MSE}=\E\Big(y-\frac1{\sqrt{2\pi}}-\tfrac12x\Big)^2
+=\E(y^2)+\frac1{2\pi}+\frac14\E(x^2)-\frac{2}{\sqrt{2\pi}}\E(y)-\E(yx)+\frac{\E(x)}{\sqrt{2\pi}},
+\]
+with $\E(y^2)=\E\big((f(x)+x\epsilon)^2\big)=\E\big(f(x)^2\big)+1=\tfrac12\E(x^2)+1=\tfrac12+1$, so
+\[
+\mathrm{MSE}=\tfrac12+1+\frac1{2\pi}+\frac14-\frac2{\sqrt{2\pi}}\cdot\frac1{\sqrt{2\pi}}-\frac12
+=\frac54-\frac1{2\pi}=1.091 .
+\]
+\ans{$\mathrm{MSE}_{\mathrm{BLP}}=\dfrac54-\dfrac1{2\pi}\approx1.091$}
+
+\subq{(d)}
+For a step function $g(x)$ (not minimisable with respect to $g(x)$ in the first term),
+\[
+\begin{aligned}
+\mathrm{MSE}&=\E(y-g(x))^2\\
+&=\underbrace{\E\big(y-\E(y\mid x)\big)^2}_{=1}+\E\big(\E(y\mid x)-g(x)\big)^2 ,
+\end{aligned}
+\]
+\[
+\begin{aligned}
+\E\big(\E(y\mid x)-g(x)\big)^2&=\E\big(f(x)-g(x)\big)^2\\
+&=\int_{-\infty}^{x_0}\big(f(x)-a\big)^2\phi(x)\,dx+\int_{x_0}^{\infty}\big(f(x)-b\big)^2\phi(x)\,dx
+\end{aligned}
+\]
+where $\phi$ is the standard normal density. Minimising numerically (code: \href{https://github.com/ae4292/Econometrics_PSets/blob/main/ps1/ps1_cart.py}{ps1\_cart.py}) gives
+\[
+x_0=0.7049,\qquad a=0.1155,\qquad b=1.2942 ,
+\]
+\[
+\mathrm{MSE}_{\mathrm{CART}}=1+\E\big(f(x)-g(x)\big)^2=1+0.0871=1.0871 .
+\]
+\ans{$\mathrm{MSE}_{\mathrm{CART}}=1.0871$}
+The MSE of the BLP is higher than that of the CART.
+
+\begin{center}
+\begin{tikzpicture}[>=stealth, scale=1.1]
+  \draw[->] (-3.2,0) -- (3.4,0) node[right] {$x$};
+  \draw[->] (0,-1.0) -- (0,3.2) node[above] {$y$};
+  % f(x)
+  \draw[thick] (-3,0) -- (0,0) -- (2.8,2.8) node[right] {$f(x)$};
+  % BLP
+  \draw[dashed] (-3,-0.2) -- (2.8,{0.4+0.5*2.8}) node[above right] {BLP};
+  % CART
+  \draw[thick,dotted] (-3,0.12) -- (0.7,0.12);
+  \draw[thick,dotted] (0.7,1.3) -- (2.8,1.3) node[right] {$g(x)$};
+  \draw[dotted] (0.7,0.12) -- (0.7,1.3);
+  \node[below] at (0.7,0) {$x_0$};
+  \node[left] at (0,0.12) {$a$};
+  \node[left] at (0,1.3) {$b$};
+\end{tikzpicture}
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\problem{3}
+
+\subq{(a)}
+With one observation,
+\[
+\hat\beta_{OLS}=\Big(\sum x_i x_i\Big)^{-1}\sum x_i y_i=\frac{y_i}{x_i}.
+\]
+\[
+\E(\hat\beta_{OLS})=\E\!\left(\frac{y}{x}\right)=\E\!\left(\frac{\beta x+\varepsilon}{x}\right)
+=\beta\cdot1+\E\!\left(\frac{\varepsilon}{x}\right)=\beta,
+\]
+since $\E(\varepsilon\mid x)=0$.
+\[
+\Var(\hat\beta_{OLS})=\Var\!\left(\frac yx\right)=\Var\!\left(\frac{\beta x+\varepsilon}{x}\right)
+=\Var(\beta)+\Var\!\left(\frac\varepsilon x\right)=0+\Var\!\left(\frac\varepsilon x\right),
+\]
+\[
+\Var\!\left(\frac\varepsilon x\right)=\E\!\left(\frac1{x^2}\right)\E(\varepsilon^2)-\E\!\left(\frac1x\right)^{\!2}\E(\varepsilon)^2
+=\E\!\left(\frac1{x^2}\right)\cdot1-0
+=\frac{25+\frac{25}{49}}{2}=\frac{625}{49}.
+\]
+\ans{$\E(\hat\beta)=\beta,\qquad \Var(\hat\beta)=\dfrac{625}{49}$}
+
+\subq{(b)}
+\[
+\E(\tilde\beta)=\E(xy)=\E(x\beta x+x\varepsilon)=\E(x^2\beta)=\beta\,\E(x^2),
+\qquad
+\E(x^2)=\tfrac12\Big(\tfrac1{25}+\tfrac{49}{25}\Big)=\tfrac12\cdot2=1,
+\]
+so $\E(\tilde\beta)=\beta$: $\tilde\beta$ is unconditionally unbiased for $\beta$.
+\[
+\Var(\tilde\beta)=\Var(xy)=\Var(x\beta x+x\varepsilon)=\beta^2\Var(x^2)+\Var(x\varepsilon),
+\]
+\[
+\Var(x^2)=\E(x^2)-\E(x)^2=1-\tfrac45=\tfrac15,
+\]
+\[
+\Var(x\varepsilon)=\E(x^2\varepsilon^2)-\E(x)^2\E(\varepsilon)^2=1\cdot1-0=1,
+\]
+\ans{$\Var(\tilde\beta)=\dfrac{\beta^2}{5}+1$}
+
+\subq{(c)}
+\[
+\Var(\hat\beta_{OLS})=\frac{625}{49},\qquad
+\Var(\tilde\beta)=\frac05+1=1\quad(\beta=0).
+\]
+$\Var(\tilde\beta)<\Var(\hat\beta_{OLS})$, which are unconditional variances. Gauss--Markov says $\hat\beta_{OLS}$ is the best conditional estimator of $\beta$ that minimises the variance. Thus it does not contradict, since these are unconditional estimates.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\problem{4}
+\[
+\begin{aligned}
+\Var(\tilde\beta\mid X)&=\Var\!\left(\frac{\hat\beta_1+\dots+\hat\beta_k}{k}\,\Big|\,X\right)\\
+&=\frac1{k^2}\Var\big(\hat\beta_1+\dots+\hat\beta_k\mid X\big).
+\end{aligned}
+\]
+Since the $\hat\beta_j$ are independent,
+\[
+\begin{aligned}
+\frac1{k^2}\Var(\hat\beta_1+\dots+\hat\beta_k\mid X)
+&=\frac1{k^2}\Big(\Var(\hat\beta_1\mid X)+\dots+\Var(\hat\beta_k\mid X)\Big).
+\end{aligned}
+\]
+Since they should have the same distribution,
+\[
+\begin{aligned}
+\frac1{k^2}\Big(\Var(\hat\beta_1\mid X)+\dots+\Var(\hat\beta_k\mid X)\Big)
+&=\frac1k\Var(\hat\beta_1\mid X)\\
+&=\frac1k\hat\sigma^2(X'X)^{-1}\\
+&=\frac1k\cdot\frac{\hat\epsilon'\hat\epsilon}{\frac nk-1}(X'X)^{-1}\\
+&=\frac1{n-k}\,\hat\epsilon'\hat\epsilon\,(X'X)^{-1}.
+\end{aligned}
+\]
+Therefore
+\[
+\Var(\hat\beta_{OLS}\mid X)=\frac1{n-k}\hat\epsilon'\hat\epsilon\,(X'X)^{-1},
+\]
+which is the same as $\Var(\tilde\beta\mid X)$ for bagging. This estimator is not better than the non-split sample, since they have the same estimator variance.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\problem{5}
+
+\subq{Identity}
+\[
+M_Z=I-Z(Z'Z)^{-1}Z',\qquad M_ZW=W-Z(Z'Z)^{-1}Z'W,
+\]
+\[
+\begin{aligned}
+M_{M_ZW}&=I-M_ZW\big((M_ZW)'M_ZW\big)^{-1}(M_ZW)'\\
+&=I-M_ZW\big(W'M_Z M_ZW\big)^{-1}W'M_Z\\
+&=I-M_ZW\big(W'M_ZW\big)^{-1}W'M_Z,
+\end{aligned}
+\]
+\[
+M_{M_ZW}M_Z=M_Z-M_ZW\big(W'M_ZW\big)^{-1}W'M_Z .
+\]
+By Frisch--Waugh--Lovell,
+\[
+\begin{aligned}
+M_{W,Z}&=M_Z+M_{M_ZW}-I\\
+&=M_Z+I-M_ZW\big(W'M_ZW\big)^{-1}W'M_Z-I\\
+&=M_Z-M_ZW\big(W'M_ZW\big)^{-1}W'M_Z .
+\end{aligned}
+\]
+\ans{$M_{W,Z}=M_{M_ZW}\,M_Z$}
+
+\subq{Implication for the 3-step procedure}
+\begin{enumerate}[label=\arabic*.]
+  \item $R_Y=M_ZY,\quad R_X=M_ZX,\quad R_W=M_ZW$.
+  \item $\tilde R_Y=M_{M_ZW}M_ZY,\quad \tilde R_X=M_{M_ZW}M_ZX$.
+  \item $\tilde R_Y=M_{W,Z}Y,\quad \tilde R_X=M_{W,Z}X$, so
+        \[
+        M_{W,Z}Y=\beta\cdot M_{W,Z}X+\varepsilon,\qquad
+        \varepsilon=M_{M_{W,Z}X}M_{W,Z}Y=M_{W,Z,X}\,Y .
+        \]
+\end{enumerate}
+$\hat\beta_1$ is orthogonal to $W$ and $Z$, so it is essentially the effect of $X$ on $Y$ without $W$ and $Z$.
+
+\end{document}
