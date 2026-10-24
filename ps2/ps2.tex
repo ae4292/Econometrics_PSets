@@ -40,43 +40,33 @@ I would not reject the null hypothesis as the p-value (0.58) is not below 0.05 s
 \problem{2}
 
 \subq{(a)}
+$\E(\epsilon_i\mid x_i)=0$, so $\E(\epsilon_ix_i)=\E\big(x_i\,\E(\epsilon_i\mid x_i)\big)=0$ and $\hat\beta-\beta=\dfrac{\sum x_i\epsilon_i}{\sum x_i^2}$ is conditionally unbiased. The sum of even numbers squared is
 \[
-\E(x_ix_i')=\frac1n\sum_{i=1}^n x_ix_i'=\frac1n\cdot\big(0+2^2+0+4^2+\dots+n^2\big)
-=\frac1n\cdot\frac{2n(n+1)(2n+1)}{3}<\infty
+\sum_{i=1}^n x_i^2=0+2^2+0+4^2+\dots+n^2=\sum_{k=1}^{n/2}(2k)^2=\frac{n(n+1)(n+2)}{6}\ \to\ \infty
 \]
-(sum of even numbers squared). $\E(\epsilon_i\mid x_i)$ is always $0$.
+(for $n$ even). Therefore
 \[
-\Var(y_i\mid x_i)=\Var(\epsilon_i\mid x_i)
+\Var(\hat\beta\mid x)=\frac{\sigma^2}{\sum x_i^2}=\frac{6}{n(n+1)(n+2)}\to0 ,
 \]
-\[
-\E(\epsilon_ix_i)=\E\big(\E(\epsilon_ix_i\mid x_i)\big)=\E_x\big(x_i\,\E(\epsilon_i\mid x_i)\big)=\E(x_i\cdot0)=0
-\]
-\[
-\Var(\epsilon_ix_i)=\E(\epsilon_i^2x_i^2)-\E(\epsilon_ix_i)^2=\E\big(\E(\epsilon_i^2x_i^2\mid x_i)\big)
-=\E\big(x_i^2\,\E(\epsilon_i^2\mid x_i)\big)=\E(x_i^2)<\infty
-\]
-$\sigma^2\E(x_i^2)^{-1}$ shrinks as $n\to\infty$. OLS $\hat\beta$ for $\beta$ is consistent, $\E[\hat\beta]=\beta$.
+so $\hat\beta$ is unbiased with variance going to zero: OLS $\hat\beta$ for $\beta$ is consistent, $\E[\hat\beta]=\beta$.
 
 \subq{(b)}
 \[
-\E(x_ix_i')=\E(\lambda^{2i})=\frac1n\sum\lambda^{2i}=\frac{\lambda^2}{n(1-\lambda^2)}<\infty
+\sum_{i=1}^n x_i^2=\sum_{i=1}^n\lambda^{2i}=\frac{\lambda^2\,(1-\lambda^{2n})}{1-\lambda^2}\ \to\ \frac{\lambda^2}{1-\lambda^2}<\infty
 \]
-if $n\to\infty$, $\E x_ix_i'=0$ so it is singular.
+and
 \[
-\E(x_ix_i')^{-1}=\frac{n(1-\lambda^2)}{\lambda^2}
+\Var(\hat\beta\mid x)=\frac{\sigma^2}{\sum x_i^2}\ \to\ \frac{1-\lambda^2}{\lambda^2}\neq0 ,
 \]
-this however is never converging as $n\to\infty$, thus $\hat\beta$ does not converge in probability to $\beta$ as the variance will be infinite as $n\to\infty$.
+this however never goes to zero as $n\to\infty$, thus $\hat\beta$ does not converge in probability to $\beta$ as the variance stays positive.
 
 \subq{(c)}
-For 2a we can have perfect collinearity since for $n=1$, $\mathrm{rank}(X)\neq1$. However for 2b Gauss-Markov holds. Both have strict exogeneity, homoskedasticity and no serial correlation.
+For 2a we can have perfect collinearity since for $n=1$, $x_1=0$ and $\mathrm{rank}(X)\neq1$. However for 2b Gauss-Markov holds. Both have strict exogeneity, homoskedasticity and no serial correlation.
 
 \subq{(d)}
+Since $\varepsilon_i$ are normal, $\hat\beta-\beta=\dfrac{\sum x_i\varepsilon_i}{\sum x_i^2}\sim N\!\left(0,\dfrac{\sigma^2}{\sum x_i^2}\right)$ exactly, and $\sum x_i^2\to\lambda^2/(1-\lambda^2)$ from 2b, so with $\sigma^2=1$
 \[
-\begin{aligned}
-\sqrt n(\hat\beta_{OLS}-\beta)&\to N\big(0,\sigma^2\E(x_ix_i')^{-1}\big)\\
-&\to N\!\left(0,\sigma^2\frac{n(1-\lambda^2)}{\lambda^2}\right)\quad\text{from 2b}\\
-\hat\beta_{OLS}&\to N\!\left(\beta,\sigma^2\cdot\frac{1-\lambda^2}{\lambda^2}\right),\qquad\sigma^2=1
-\end{aligned}
+\hat\beta_{OLS}\to N\!\left(\beta,\ \frac{1-\lambda^2}{\lambda^2}\right).
 \]
 \ans{$\hat\beta_{OLS}\to N\!\left(\beta,\dfrac{1-\lambda^2}{\lambda^2}\right)$}
 
@@ -86,11 +76,11 @@ For 2a we can have perfect collinearity since for $n=1$, $\mathrm{rank}(X)\neq1$
 \subq{(a)}
 $\theta=\dfrac{s_1^2}{\sigma^2}=1$, $\quad g(\theta)=\log(\theta)$, $\quad g'(\theta)=\dfrac1\theta=1$.
 \[
-(\hat\theta-\theta)\sim N\big(0,(g(\theta))^2\cdot V\big)=N(0,1\cdot V)=N(0,2)
+\sqrt n(\hat\theta-\theta)\to N\big(0,(g'(\theta))^2\cdot V\big)=N(0,1\cdot V)=N(0,2)
 \]
 \[
 \frac{s_1^2}{\sigma^2}=\frac{\chi^2_{n-1}}{n-1},\qquad
-\Var\!\left(\frac{s_1^2}{\sigma^2}\right)=\Var\!\left(\frac{\chi^2_{n-1}}{n-1}\right)=\frac{2n}{n-1}\xrightarrow[n\to\infty]{}2
+\Var\!\left(\sqrt n\,\frac{s_1^2}{\sigma^2}\right)=n\,\Var\!\left(\frac{\chi^2_{n-1}}{n-1}\right)=\frac{2n}{n-1}\xrightarrow[n\to\infty]{}2
 \]
 \[
 \begin{pmatrix}\sqrt{n_1}\log\dfrac{s_1^2}{\sigma^2}\\[2mm]\sqrt{n_2}\log\dfrac{s_2^2}{\sigma^2}\end{pmatrix}
@@ -112,72 +102,72 @@ T=\sqrt{\frac{n_2}{n_1+n_2}}\cdot\sqrt{n_1}\log\!\left(\frac{s_1^2}{\sigma^2}\ri
 \]
 
 \subq{(b)}
-$P(T\ge1.96\cdot\sqrt2)=0.05$
+The asymptotic test rejects if $T>z_{0.95}\sqrt2$. The finite-sample test rejects if $\dfrac{s_1^2}{s_2^2}>q_{0.95}$, the $0.95$ quantile of $F(n_1-1,n_2-1)$, that is
 \[
-F(n_1-1,n_2-1)=\frac{s_1^2/(n_1-1)}{s_2^2/(n_2-1)}\ \text{ as } n_1,n_2\to\infty\ \to\ \frac{s_1^2}{s_2^2}\cdot c\sim\frac{s_1^2}{s_2^2}
+\sqrt{\frac{n_1n_2}{n_1+n_2}}\,\log\frac{s_1^2}{s_2^2}>c_n:=\sqrt{\frac{n_1n_2}{n_1+n_2}}\,\log(q_{0.95}),\qquad\text{i.e. } T>c_n .
 \]
-$P(F>q_{0.95})$ at large $n$
+Under the null the $F$ test has size exactly $0.05$, so $P(T>c_n)=0.05$ for every $n$. Also
 \[
-\Rightarrow P\!\left(\frac{s_1^2}{s_2^2}>q_{0.95}\right)=P\!\left(\sqrt{\frac{n_1n_2}{n_1+n_2}}\log\frac{s_1^2}{s_2^2}>\sqrt{\frac{n_1n_2}{n_1+n_2}}\log(q_n)\right)
+F(n_1-1,n_2-1)=\frac{s_1^2/\sigma^2}{s_2^2/\sigma^2}\ \text{ as } n_1,n_2\to\infty\ \to\ \frac{s_1^2}{s_2^2}\cdot c\sim\frac{s_1^2}{s_2^2}
 \]
+so $T\to N(0,2)$, which has a continuous cdf, hence $c_n\to z_{0.95}\sqrt2$. Then
 \[
-P\!\left(T>\sqrt{\frac{n_1n_2}{n_1+n_2}}\log(q_n)\right)=0.05
+P(\text{tests disagree})=P\big(T\text{ between }c_n\text{ and }z_{0.95}\sqrt2\big)\to0 ,
 \]
-This is equivalent to $P(T>z_{0.95}\sqrt2)=0.05$ as they have same probability as long as $n_1$ and $n_2\to\infty$.
+that is $P(T>z_{0.95}\sqrt2)=0.05$ is equivalent to $P(T>c_n)=0.05$ as they have same probability as long as $n_1$ and $n_2\to\infty$.
 
 \subq{(c)}
 \[
 \E(T)=\sqrt{\frac{n_2}{n_1+n_2}}\,\E\!\left(\sqrt{n_1}\log\frac{s_1^2}{\sigma^2}\right)-\sqrt{\frac{n_1}{n_1+n_2}}\,\E\!\left(\sqrt{n_2}\log\frac{s_2^2}{\sigma^2}\right)
 \]
 \[
-y_{ji}=\mu+\sigma z_{ji}
+y_{ji}=\mu_j+\sigma z_{ji},\qquad \E z=0,\ \E z^2=\int y^2\,dF_0(y)=1,\ \E z^4=\kappa
 \]
 \[
-s_1^2=\frac1{n_1-1}\sum\Big(\mu+\sigma z_{ji}-\frac1{n_1}\sum\mu+\sigma z_{ji}\Big)^2=(\sigma z_{ji}-\sigma\bar z_j)^2=\sigma^2\sum(z_{ji}-\bar z_j)^2\Big/(n_1-1)
+s_1^2=\frac1{n_1-1}\sum\big(y_{1i}-\bar y_1\big)^2=\frac{\sigma^2}{n_1-1}\sum(z_{1i}-\bar z_1)^2
 \]
 \[
-\frac{s_1^2}{\sigma^2}=\frac{\sum(z_{ji}-\bar z_j)^2}{n_1-1}=\frac{\sum z_{ji}^2-n_1\bar z_j^2}{n_1-1}=\frac{n_1}{n_1-1}\left(\frac1{n_1}\sum z_i^2-\bar z^2\right)
+\frac{s_1^2}{\sigma^2}=\frac{\sum z_{i}^2-n_1\bar z^2}{n_1-1}=\frac{n_1}{n_1-1}\left(\frac1{n_1}\sum z_i^2-\bar z^2\right)
 \]
-$\dfrac{s_1^2}{\sigma^2}$ as $n_1\to\infty$: $\bar z=\dfrac1{n_1}\sum z_i$, $\ \dfrac1n\sum z_i^2\to1$ as $\int y^2\,dF_0(y)=1$
+As $n_1\to\infty$, $\bar z=\dfrac1{n_1}\sum z_i\to0$ and $\dfrac1{n_1}\sum z_i^2\to1$ as $\int y^2\,dF_0(y)=1$, so
 \[
-\frac{n_1}{n_1-1}\left(1-\frac1{n_1}\right)=\frac{n_1-1}{n_1-1}=1,\qquad\frac{s^2}{\sigma^2}\xrightarrow{p}1
+\frac{s_1^2}{\sigma^2}\xrightarrow{p}1 .
 \]
+Write $m_2=\frac1n\sum z_i^2$ (dropping the subscript $1$). Then
 \[
-\sqrt{n_1}\left(\frac{s_1^2}{\sigma^2}-1\right)=\sqrt{n_1}\left(\frac{n_1}{n_1-1}\Big(\frac1{n_1}\sum z_i^2-\bar z^2\Big)-1\right)\quad\text{as } n_1\to\infty
+\sqrt n\left(\frac{s^2}{\sigma^2}-1\right)=\sqrt n\left(\frac{n}{n-1}(m_2-\bar z^2)-1\right)
+=\sqrt n\,(m_2-1)-\sqrt n\,\bar z^2+\frac{\sqrt n}{n-1}\,(m_2-\bar z^2)
 \]
+$\sqrt n\,\bar z^2=(\sqrt n\,\bar z)\,\bar z\to0$ as $\sqrt n\,\bar z$ is asymptotically $N(0,1)$ and $\bar z\to0$
+
+$\dfrac{\sqrt n}{n-1}(m_2-\bar z^2)\to0\cdot(1-0)=0$ as $n$ increases
+
+thus
 \[
-\begin{aligned}
-\sqrt n\,\frac n{n+1}\left(\frac1n\sum z_i^2-\bar z^2-1\right)&=\sqrt n\Big(\frac1n\sum z_i^2-\bar z^2\Big)+\frac1{n+1}\Big(\sum z_i^2-\bar z^2\Big)-1\\
-&=\sqrt n\,\frac1n\sum z_i^2-\sqrt n-\sqrt n\,\bar z^2+\frac{\sqrt n}{n+1}\Big(\sum z_i^2-\bar z^2\Big)
-\end{aligned}
+\E\!\left(\sqrt n\,(m_2-1)\right)=0,\qquad
+\Var\!\left(\sqrt n\,(m_2-1)\right)=\frac1n\Var\Big(\sum z_i^2\Big)=\Var(z^2)=\E z^4-1=\kappa-1
 \]
-$\sqrt n\,\bar z^2\to\sqrt n\cdot0\to0$ as $n$ increases
+and by the CLT
 \[
-\frac{\sqrt n}{n+1}\Big(\sum z_i^2-\bar z^2\Big)=\frac{\sqrt n}{n+1}\cdot1-0=\frac{\sqrt n}{n+1}\quad\text{which}\to0\text{ as } n\text{ increases}
+\sqrt n\left(\frac{s_1^2}{\sigma^2}-1\right)\Rightarrow N(0,\kappa-1).
 \]
-thus $\E\!\left(\sqrt n\,\dfrac{s_1^2}{\sigma^2}-1\right)=\sqrt n\Big(\dfrac1n\sum z_i^2-1\Big)\to\sqrt n(1-1)=0$
+delta method with $g(\theta)=\log\theta$
 \[
-\Var\!\left(\sqrt n\,\frac{s_1^2}{\sigma^2}-1\right)=\Var\!\left(\frac1{\sqrt n}\sum z_i^2-1\right)=\frac1n\Var\Big(\sum z_i^2\Big)=\frac1n\cdot n(\kappa-1)
-\]
-\[
-\Var\!\left(\sqrt n\,\frac{s_1^2}{\sigma^2}-1\right)=\kappa-1
-\]
-delta method
-\[
-\sqrt n\log\!\left(\frac{s_1^2}{\sigma^2}-1\right)=\sqrt n\log\!\left(\frac{s_1^2}{\sigma^2}\right)\to N\!\left(0,\Big(\frac{\partial g(\theta)}{\partial\theta}\Big)^{2}(\kappa-1)\right)
-\]
-\[
+\sqrt n\log\!\left(\frac{s_1^2}{\sigma^2}\right)\to N\!\left(0,\Big(\frac{\partial g(\theta)}{\partial\theta}\Big)^{2}(\kappa-1)\right),\qquad
 \left(\frac{\partial g(\theta)}{\partial\theta}\right)^2=\left(\frac1\theta\right)^2=\left(\frac11\right)^2=1
 \]
 \[
-\sqrt{n_1}\log\!\left(\frac{s_1^2}{\sigma^2}\right)\Rightarrow N(0,\kappa-1)
+\sqrt{n_1}\log\!\left(\frac{s_1^2}{\sigma^2}\right)\Rightarrow N(0,\kappa-1),\qquad
+\sqrt{n_2}\log\!\left(\frac{s_2^2}{\sigma^2}\right)\Rightarrow N(0,\kappa-1)
+\]
+independent, so
+\[
+\E(T)=\sqrt{\frac{n_2}{n_1+n_2}}\cdot0-\sqrt{\frac{n_1}{n_1+n_2}}\cdot0=0
 \]
 \[
-\E(T)=\sqrt{\frac{n_2}{n_1+n_2}}\cdot0+\sqrt{\frac{n_2}{n_1+n_2}}\cdot0=0
+\Var(T)=\left(\frac{n_2}{n_1+n_2}+\frac{n_1}{n_1+n_2}\right)(\kappa-1)=\kappa-1
 \]
-\[
-\Var(T)=\left(\frac{n_1}{n_1+n_2}+\frac{n_2}{n_1+n_2}\right)(\kappa-1)=\kappa-1
-\]
+and $T\Rightarrow N(0,\kappa-1)$.
 
 \subq{(d)}
 \[
@@ -193,36 +183,39 @@ The p-value under normal assumptions shows that we would reject the null with 0.
 \problem{4}
 
 \subq{(a)}
+$Y_i=\beta_j+\epsilon_i$ if alien $i$ is of type $j$, so $x_i=j_i$ is the vector of type indicators and
 \[
 \sqrt n(\hat\beta-\beta)\xrightarrow{d}N\big(0,\sigma^2(\E(xx'))^{-1}\big)
 \]
 $\sigma^2=\Var(\epsilon_i\mid j_i)=1$ stated in problem.
+
+$j$ is indicator which has $\E(I^2)=\E(I)=1/p$, so $\E(j_ij_i')=\frac1pI_p$ and
 \[
-\E(xx')^{-1}\Rightarrow\E(j_ij_i')^{-1}=\frac1p\sum(j_ij_i')^{-1}\Rightarrow p\cdot1
+\E(xx')^{-1}=\E(j_ij_i')^{-1}=p\cdot I_p
 \]
-$j$ is indicator which has $\E(I^2)=\E(I)=1/p$.
 \[
-\sqrt n(\hat\beta-\beta)\xrightarrow{d}N(0,p)
+\sqrt n(\hat\beta-\beta)\xrightarrow{d}N(0,\,p\,I_p),\qquad\text{each component }N(0,p).
 \]
+(equivalently $\hat\beta_j$ is the mean of the $n_j$ aliens of type $j$, with $n_j/n\to1/p$.)
 
 \subq{(b)}
 \[
-\min\ \|y-Xb\|^2+\lambda\sum|b_j|
+\min\ \|Y-Xb\|^2+\lambda\sum|b_j|
 \]
 \[
-\|y-Xb\|^2=\sum_j^{p}\sum_i^{n_j}(y_i-b_j)^2=\sum_j^{p}\sum_i^{n_j}(y_i-\hat\beta_j)^2+\sum_j^{p}n_j(\hat\beta_j-b_j)^2
+\|Y-Xb\|^2=\sum_j^{p}\sum_i^{n_j}(Y_i-b_j)^2=\sum_j^{p}\sum_i^{n_j}(Y_i-\hat\beta_j)^2+\sum_j^{p}n_j(\hat\beta_j-b_j)^2
 =\sum_j^{p}n_j(\hat\beta_j-b_j)^2+\sum\epsilon'
 \]
 ($\sum\epsilon'$ can't minimize with $b_j$)
 \[
 \min\ \sum_j^{p}n_j(\hat\beta_j-b_j)^2+\lambda\sum|b_j|
 \]
-FOC $b_j$: $\quad-2n_j(\hat\beta_j-b_j)\pm\lambda=0\qquad 2n_j\hat\beta_j=2n_jb_j\pm\lambda$
+which separates across $j$. FOC $b_j\neq0$: $\quad-2n_j(\hat\beta_j-b_j)+\lambda\,\mathrm{sign}(b_j)=0\qquad 2n_j\hat\beta_j=2n_jb_j+\lambda\,\mathrm{sign}(b_j)$
 \[
-b_j=\hat\beta_j\pm\frac{\lambda}{2n_j}
+b_j=\hat\beta_j-\mathrm{sign}(b_j)\frac{\lambda}{2n_j}
 \]
 \[
-b_j^{LASSO}=\begin{cases}
+\hat\beta_{j,Lasso}=\begin{cases}
 \hat\beta_j+\dfrac{\lambda}{2n_j} & \hat\beta_j<-\dfrac{\lambda}{2n_j}\\[3mm]
 \hat\beta_j-\dfrac{\lambda}{2n_j} & \hat\beta_j>\dfrac{\lambda}{2n_j}\\[3mm]
 0 & \text{otherwise}
@@ -230,47 +223,44 @@ b_j^{LASSO}=\begin{cases}
 \]
 
 \subq{(c)}
+Take $\beta_j>0$ (then $\hat\beta_j>\lambda/2n_j$ with probability $\to1$ below, so the middle case of (b) applies). Here $n_j/n\to1/p$, i.e. $\dfrac n{n_j}\to p$.
+
 $\lambda=\sqrt n$
 \[
-\E\big(\sqrt n(\hat\beta_{Lasso}-\beta)\big)=\sqrt n\Big(\hat\beta_j-\frac{\sqrt n}{2n_j}-\beta\Big)=-\sqrt n\cdot\frac{\sqrt n}{2n_j}=-\frac{n}{2n_j}=-\frac p2
+\sqrt n(\hat\beta_{j,Lasso}-\beta_j)=\sqrt n(\hat\beta_j-\beta_j)-\sqrt n\cdot\frac{\sqrt n}{2n_j}=\sqrt n(\hat\beta_j-\beta_j)-\frac{n}{2n_j}
 \]
-$\dfrac n{n_j}=\dfrac1p$, $\quad p$: chance we select $j$: $\dfrac{n_j}{n}=\dfrac{A_j}{\text{all aliens}}=p$
+the second term is non-random in the limit, $\dfrac n{2n_j}\to\dfrac p2$, so it shifts the mean and leaves the variance
 \[
-\Var\big(\sqrt n(\hat\beta_{Lasso}-\beta)\big)=\Var\big(\sqrt n(\hat\beta_j-\beta)\big)-\Var\Big(\sqrt n\cdot\frac{\sqrt n}{2n_j}\Big)\to\Var\big(\sqrt n(\hat\beta_j-\beta)\big)=p
+\Var\big(\sqrt n(\hat\beta_{j,Lasso}-\beta_j)\big)\to\Var\big(\sqrt n(\hat\beta_j-\beta_j)\big)=p
 \]
-the second term $\to0$.
 \[
-\sqrt n(\hat\beta_{Lasso}-\beta)\xrightarrow{d}N\Big(-\frac p2,\,p\Big)
+\sqrt n(\hat\beta_{j,Lasso}-\beta_j)\xrightarrow{d}N\Big(-\frac p2,\,p\Big)
 \]
 $\lambda=n^{1/4}$
 
 Var is unchanged but expectation will change
 \[
-\E\big(\sqrt n(\hat\beta_{Lasso}-\beta)\big)=-\sqrt n\cdot\frac{n^{1/4}}{2n_j}=\frac{n^{3/4}}{2n_j}=\frac p2\cdot\frac1{n^{1/4}}\to0
+-\sqrt n\cdot\frac{n^{1/4}}{2n_j}=-\frac{n^{3/4}}{2n_j}=-\frac p2\cdot\frac1{n^{1/4}}\to0
 \]
 \[
-\sqrt n(\hat\beta_{Lasso}-\beta)\xrightarrow{d}N(0,p)
+\sqrt n(\hat\beta_{j,Lasso}-\beta_j)\xrightarrow{d}N(0,p)
 \]
 $\lambda=n^{3/4}$
 \[
-\E\big(\sqrt n(\hat\beta_{Lasso}-\beta)\big)=-\sqrt n\cdot\frac{n^{3/4}}{2n_j}=\frac{n^{5/4}}{2n_j}=n^{1/4}\cdot\frac p2\to\infty
+-\sqrt n\cdot\frac{n^{3/4}}{2n_j}=-\frac{n^{5/4}}{2n_j}=-n^{1/4}\cdot\frac p2\to-\infty
 \]
-\[
-\sqrt n(\hat\beta_{Lasso}-\beta)\xrightarrow{d}N(\infty,p)
-\]
+so $\sqrt n(\hat\beta_{j,Lasso}-\beta_j)$ has variance $p$ but its mean diverges to $-\infty$: there is no limiting distribution (estimator is biased by too much).
 
 \subq{(d)}
-$\hat\beta_{Lasso}=0$ when $\hat\beta\le\left|\dfrac{\lambda}{2n_j}\right|=\left|\dfrac{\sqrt n}{2n_j}\right|=\left|\dfrac p2\right|$
+For a useless type $\beta_j=0$, $\hat\beta_{j,Lasso}=0$ when $|\hat\beta_j|\le\left|\dfrac{\lambda}{2n_j}\right|=\dfrac{\sqrt n}{2n_j}$, and multiplying by $\sqrt n$ the bound is $\dfrac{n}{2n_j}\to\dfrac p2$
 \[
-P\!\left(-\frac{\sqrt n}{2n_j}\le\hat\beta\le\frac{\sqrt n}{2n_j}\right)=P\!\left(-\frac p2\le\sqrt n\hat\beta\le\frac p2\right)
+P\!\left(-\frac{\sqrt n}{2n_j}\le\hat\beta_j\le\frac{\sqrt n}{2n_j}\right)=P\!\left(-\frac{n}{2n_j}\le\sqrt n\hat\beta_j\le\frac{n}{2n_j}\right)\to P\!\left(-\frac p2\le\sqrt n\hat\beta_j\le\frac p2\right)
 \]
-$\sqrt n(\hat\beta-\beta)\to\sqrt n(\hat\beta)$ as $\beta=0$ if useless alien
-
-for having $k$ useless aliens we need $\left(P\!\left(-\dfrac p2\le\sqrt n\hat\beta\le\dfrac p2\right)\right)^k$
+$\sqrt n(\hat\beta_j-\beta_j)=\sqrt n\hat\beta_j\to N(0,p)$ as $\beta_j=0$ if useless alien, so
 \[
-P\!\left(-\frac p2\le\sqrt n\hat\beta\le\frac p2\right)=\left(2\Phi\!\left(\frac p2\cdot\frac1{\sqrt p}\right)-1\right)=2\Phi\!\left(\frac{\sqrt p}{2}\right)-1
+P\!\left(-\frac p2\le\sqrt n\hat\beta_j\le\frac p2\right)=2\Phi\!\left(\frac p2\cdot\frac1{\sqrt p}\right)-1=2\Phi\!\left(\frac{\sqrt p}{2}\right)-1
 \]
-$\Phi$ is normal cdf
+$\Phi$ is normal cdf. The $\hat\beta_j$ are asymptotically independent (diagonal covariance), so for having $k$ useless aliens we need all $k$ of them to be zero, $\left(2\Phi\!\left(\dfrac{\sqrt p}{2}\right)-1\right)^k$, while types with $\beta_j>0$ are nonzero with probability $\to1$ (so only the useless ones are zero).
 \ans{asymptotic probability of $k$ useless aliens is $\left(2\Phi\!\left(\dfrac{\sqrt p}{2}\right)-1\right)^k$}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
