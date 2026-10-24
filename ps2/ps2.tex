@@ -112,7 +112,7 @@ T=\sqrt{\frac{n_2}{n_1+n_2}}\cdot\sqrt{n_1}\log\!\left(\frac{s_1^2}{\sigma^2}\ri
 \]
 
 \subq{(b)}
-$P(T\ge z_{0.95}\sqrt2)=0.05$
+$P(T\ge1.96\cdot\sqrt2)=0.05$
 \[
 F(n_1-1,n_2-1)=\frac{s_1^2/(n_1-1)}{s_2^2/(n_2-1)}\ \text{ as } n_1,n_2\to\infty\ \to\ \frac{s_1^2}{s_2^2}\cdot c\sim\frac{s_1^2}{s_2^2}
 \]
@@ -198,7 +198,7 @@ The p-value under normal assumptions shows that we would reject the null with 0.
 \]
 $\sigma^2=\Var(\epsilon_i\mid j_i)=1$ stated in problem.
 \[
-\E(xx')^{-1}\Rightarrow\E(j_ij_i')^{-1}=\Big(\frac1p\sum j_ij_i'\Big)^{-1}\Rightarrow p\cdot1
+\E(xx')^{-1}\Rightarrow\E(j_ij_i')^{-1}=\frac1p\sum(j_ij_i')^{-1}\Rightarrow p\cdot1
 \]
 $j$ is indicator which has $\E(I^2)=\E(I)=1/p$.
 \[
@@ -211,9 +211,9 @@ $j$ is indicator which has $\E(I^2)=\E(I)=1/p$.
 \]
 \[
 \|y-Xb\|^2=\sum_j^{p}\sum_i^{n_j}(y_i-b_j)^2=\sum_j^{p}\sum_i^{n_j}(y_i-\hat\beta_j)^2+\sum_j^{p}n_j(\hat\beta_j-b_j)^2
-=\sum_j^{p}n_j(\hat\beta_j-b_j)^2+\sum\epsilon'\epsilon
+=\sum_j^{p}n_j(\hat\beta_j-b_j)^2+\sum\epsilon'
 \]
-($\sum\epsilon'\epsilon$ can't minimize with $b_j$)
+($\sum\epsilon'$ can't minimize with $b_j$)
 \[
 \min\ \sum_j^{p}n_j(\hat\beta_j-b_j)^2+\lambda\sum|b_j|
 \]
