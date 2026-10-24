@@ -1,10 +1,5 @@
 \documentclass[11pt]{article}
 \usepackage{../econpset}
-\usepackage{upquote}
-\usepackage{listings}
-\lstset{language=Python,basicstyle=\ttfamily\footnotesize,breaklines=true,columns=fullflexible,
-  keepspaces=true,frame=single,rulecolor=\color{black!25},commentstyle=\color{black!55},
-  showstringspaces=false,aboveskip=0.4em,belowskip=0.4em}
 
 \begin{document}
 \psetheader{Problem Set 2}{Econometrics}{Code: \url{https://github.com/ae4292/Econometrics_PSets}}
@@ -37,7 +32,7 @@ $\alpha$ is the individual effect of having a given age and education on log wag
 &\alpha_{e-1,26}-2\alpha_{e,26}+\alpha_{e+1,26}=0, && e=13,\dots,16,
 \end{aligned}
 \]
-which gives $R$ of size $26\times30$ and $q=0$ (code in the appendix).
+which gives $R$ of size $26\times30$ and $q=0$.
 \ans{$F=0.920,\qquad p\text{-value}=0.581$}
 I would not reject the null hypothesis as the p-value (0.58) is not below 0.05 significance level.
 
@@ -282,120 +277,5 @@ $\Phi$ is normal cdf
 \problem{5}
 
 No. Strict stationarity means the joint distribution of a sequence doesn't depend on time $t$. The sequence can have auto-correlation and heteroskedasticity in this case. The distribution of $(y_t,x_t)$ is constant, but if we condition the distribution on $(y_{t-1},x_{t-1})$ then the distribution on $y_t\mid x_t$ can vary. Stationarity only enforces that the variance-covariance matrix doesn't depend on $t$, but it can depend on $t-1$ information if conditioned on it.
-
-\appendix
-\section*{Appendix: Code}
-
-\subsection*{Setup}
-\begin{lstlisting}
-import numpy as np
-import matplotlib.pyplot as plt
-import pandas as pd
-import statsmodels.api as sm
-\end{lstlisting}
-\subsection*{Problem 1(a)}
-\begin{lstlisting}
-wages = pd.read_csv("ps1small.csv")
-
-wages['logwage'] = np.log(wages['wage'])
-wages['eduxage'] = 'd'+ wages['education'].astype(str) + wages['age'].astype(str)
-dummies = pd.get_dummies(wages['eduxage'], dtype = int)
-wages = pd.concat([wages, dummies], axis=1)
-wages.head()
-\end{lstlisting}
-\begin{lstlisting}
-model = sm.OLS(endog= wages['logwage'], exog=wages[dummies.columns]).fit()
-coefficients = model.params
-standard_errors = model.bse
-alpha = pd.DataFrame({'Coefficient': coefficients, 'Standard Error': standard_errors})
-alpha
-\end{lstlisting}
-\subsection*{Problem 1(b)}
-\begin{lstlisting}
-R  = np.zeros((26,30))
-q = np.zeros((26,1))
-
-def col(e, a):
-    # column index for education level e and age a
-    return (e - 12) * 5 + (a - 26)   
-
-#alpha_{e,a-1} - 2*alpha_{e,a} + alpha_{e,a+1} = 0
-r = 0
-for e in range(12, 18):
-    for a in (27, 28, 29):
-        R[r, col(e, a-1)] = 1
-        R[r, col(e, a)]   = -2
-        R[r, col(e, a+1)] = 1
-        r += 1
-
-#(alpha_{e-1,27} - alpha_{e-1,26}) - 2*(alpha_{e,27} - alpha_{e,26}) + (alpha_{e+1,27} - alpha_{e+1,26}) = 0
-for r in range(18, 22):
-    e = 13 + (r - 18)     
-    R[r, col(e-1, 27)] = 1
-    R[r, col(e-1, 26)] = -1
-    R[r, col(e, 27)]   = -2
-    R[r, col(e, 26)]   = 2
-    R[r, col(e+1, 27)] = 1
-    R[r, col(e+1, 26)] = -1
-
-#alpha_{e-1,26} - 2*alpha_{e,26} + alpha_{e+1,26} = 0
-for r in range(22, 26):
-    e = 13 + (r - 22)
-    R[r, col(e-1, 26)] = 1
-    R[r, col(e, 26)]   = -2
-    R[r, col(e+1, 26)] = 1
-\end{lstlisting}
-\begin{lstlisting}
-wald_test = model.wald_test((R,q), use_f = True)
-F = wald_test.fvalue
-p_value = wald_test.pvalue
-print("F-statistic:", F)
-print("p-value:", p_value)
-\end{lstlisting}
-\subsection*{Problem 3(d)}
-\begin{lstlisting}
-from scipy import stats
-kappa = 5
-# T ~ N(0, kappa-1) under the null, but the test uses the N(0,2) critical value 1.645*sqrt(2)
-size = 1 - stats.norm.cdf(1.645*np.sqrt(2) / np.sqrt(kappa-1))
-print(f'actual asymptotic size when kappa=5: {size:.4f}')
-\end{lstlisting}
-\subsection*{Problem 3(e)}
-\begin{lstlisting}
-from scipy import stats
-\end{lstlisting}
-\begin{lstlisting}
-wage = pd.read_excel('wage.xlsx')
-wage['logwage'] = np.log(wage['wage'])
-wage.head()
-\end{lstlisting}
-\begin{lstlisting}
-wage_males = wage[wage['male']==1]
-wage_females = wage[wage['male']==0]
-
-n1 = len(wage_females)
-n2 = len(wage_males)
-
-y1 = wage_females['logwage']
-y2 = wage_males['logwage']
-y1_bar = np.mean(y1)
-y2_bar = np.mean(y2)
-
-s1 = np.sum((y1-y1_bar)**2) / (n1-1)
-s2 = np.sum((y2-y2_bar)**2) / (n2-1)
-
-T = np.sqrt(n1*n2/ (n1+n2)) * (np.log(s1) - np.log(s2))
-
-k_hat = (n1+n2)* (np.sum((y1-y1_bar)**4) + np.sum((y2-y2_bar)**4)) / (np.sum((y1-y1_bar)**2) + np.sum((y2-y2_bar)**2)) **2
-
-z = T / np.sqrt(k_hat-1)
-p_robust = 1- stats.norm.cdf(z)
-
-F = s1/s2
-p_normal = 1 - stats.f.cdf(F,n1-1,n2-1)
-
-print(f'p-value robust to non-normality {p_robust}')
-print(f'p value under normality {p_normal}')
-\end{lstlisting}
 
 \end{document}
