@@ -1,0 +1,401 @@
+\documentclass[11pt]{article}
+\usepackage{../econpset}
+\usepackage{upquote}
+\usepackage{listings}
+\lstset{language=Python,basicstyle=\ttfamily\footnotesize,breaklines=true,columns=fullflexible,
+  keepspaces=true,frame=single,rulecolor=\color{black!25},commentstyle=\color{black!55},
+  showstringspaces=false,aboveskip=0.4em,belowskip=0.4em}
+
+\begin{document}
+\psetheader{Problem Set 2}{Econometrics}{Code: \url{https://github.com/ae4292/Econometrics_PSets}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\problem{1}
+
+\subq{(a)}
+Regression of $\mathrm{lwage}$ on the 30 education $\times$ age dummies (898 observations). Estimates $\hat\alpha_{e,a}$ with standard errors in parentheses:
+\begin{center}
+\small
+\begin{tabular}{c|ccccc}
+ & $a=26$ & $a=27$ & $a=28$ & $a=29$ & $a=30$\\\hline
+$e=12$ & 9.451 (0.091) & 9.300 (0.085) & 9.538 (0.083) & 9.386 (0.085) & 9.628 (0.088)\\
+$e=13$ & 9.612 (0.192) & 9.756 (0.192) & 9.378 (0.175) & 9.820 (0.224) & 9.446 (0.203)\\
+$e=14$ & 9.581 (0.224) & 9.794 (0.171) & 9.642 (0.216) & 9.712 (0.175) & 9.645 (0.171)\\
+$e=15$ & 9.535 (0.242) & 9.386 (0.232) & 9.573 (0.265) & 9.540 (0.252) & 9.919 (0.242)\\
+$e=16$ & 10.070 (0.167) & 9.944 (0.187) & 9.992 (0.148) & 10.179 (0.131) & 10.071 (0.164)\\
+$e=17$ & 9.958 (0.483) & 10.046 (0.224) & 10.166 (0.296) & 9.618 (0.418) & 10.016 (0.374)
+\end{tabular}
+\end{center}
+$\alpha$ is the individual effect of having a given age and education on log wage.
+
+\subq{(b)}
+\[
+\begin{aligned}
+&\alpha_{e,a-1}-2\alpha_{e,a}+\alpha_{e,a+1}=0, && e=12,\dots,17,\ a=27,28,29,\\
+&(\alpha_{e-1,27}-\alpha_{e-1,26})-2(\alpha_{e,27}-\alpha_{e,26})+(\alpha_{e+1,27}-\alpha_{e+1,26})=0, && e=13,\dots,16,\\
+&\alpha_{e-1,26}-2\alpha_{e,26}+\alpha_{e+1,26}=0, && e=13,\dots,16,
+\end{aligned}
+\]
+which gives $R$ of size $26\times30$ and $q=0$ (code in the appendix).
+\ans{$F=0.920,\qquad p\text{-value}=0.581$}
+I would not reject the null hypothesis as the p-value (0.58) is not below 0.05 significance level.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\problem{2}
+
+\subq{(a)}
+\[
+\E(x_ix_i')=\frac1n\sum_{i=1}^n x_ix_i'=\frac1n\cdot\big(0+2^2+0+4^2+\dots+n^2\big)
+=\frac1n\cdot\frac{2n(n+1)(2n+1)}{3}<\infty
+\]
+(sum of even numbers squared). $\E(\epsilon_i\mid x_i)$ is always $0$.
+\[
+\Var(y_i\mid x_i)=\Var(\epsilon_i\mid x_i)
+\]
+\[
+\E(\epsilon_ix_i)=\E\big(\E(\epsilon_ix_i\mid x_i)\big)=\E_x\big(x_i\,\E(\epsilon_i\mid x_i)\big)=\E(x_i\cdot0)=0
+\]
+\[
+\Var(\epsilon_ix_i)=\E(\epsilon_i^2x_i^2)-\E(\epsilon_ix_i)^2=\E\big(\E(\epsilon_i^2x_i^2\mid x_i)\big)
+=\E\big(x_i^2\,\E(\epsilon_i^2\mid x_i)\big)=\E(x_i^2)<\infty
+\]
+$\sigma^2\E(x_i^2)^{-1}$ shrinks as $n\to\infty$. OLS $\hat\beta$ for $\beta$ is consistent, $\E[\hat\beta]=\beta$.
+
+\subq{(b)}
+\[
+\E(x_ix_i')=\E(\lambda^{2i})=\frac1n\sum\lambda^{2i}=\frac{\lambda^2}{n(1-\lambda^2)}<\infty
+\]
+if $n\to\infty$, $\E x_ix_i'=0$ so it is singular.
+\[
+\E(x_ix_i')^{-1}=\frac{n(1-\lambda^2)}{\lambda^2}
+\]
+this however is never converging as $n\to\infty$, thus $\hat\beta$ does not converge in probability to $\beta$ as the variance will be infinite as $n\to\infty$.
+
+\subq{(c)}
+For 2a we can have perfect collinearity since for $n=1$, $\mathrm{rank}(X)\neq1$. However for 2b Gauss-Markov holds. Both have strict exogeneity, homoskedasticity and no serial correlation.
+
+\subq{(d)}
+\[
+\begin{aligned}
+\sqrt n(\hat\beta_{OLS}-\beta)&\to N\big(0,\sigma^2\E(x_ix_i')^{-1}\big)\\
+&\to N\!\left(0,\sigma^2\frac{n(1-\lambda^2)}{\lambda^2}\right)\quad\text{from 2b}\\
+\hat\beta_{OLS}&\to N\!\left(\beta,\sigma^2\cdot\frac{1-\lambda^2}{\lambda^2}\right),\qquad\sigma^2=1
+\end{aligned}
+\]
+\ans{$\hat\beta_{OLS}\to N\!\left(\beta,\dfrac{1-\lambda^2}{\lambda^2}\right)$}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\problem{3}
+
+\subq{(a)}
+$\theta=\dfrac{s_1^2}{\sigma^2}=1$, $\quad g(\theta)=\log(\theta)$, $\quad g'(\theta)=\dfrac1\theta=1$.
+\[
+(\hat\theta-\theta)\sim N\big(0,(g(\theta))^2\cdot V\big)=N(0,1\cdot V)=N(0,2)
+\]
+\[
+\frac{s_1^2}{\sigma^2}=\frac{\chi^2_{n-1}}{n-1},\qquad
+\Var\!\left(\frac{s_1^2}{\sigma^2}\right)=\Var\!\left(\frac{\chi^2_{n-1}}{n-1}\right)=\frac{2n}{n-1}\xrightarrow[n\to\infty]{}2
+\]
+\[
+\begin{pmatrix}\sqrt{n_1}\log\dfrac{s_1^2}{\sigma^2}\\[2mm]\sqrt{n_2}\log\dfrac{s_2^2}{\sigma^2}\end{pmatrix}
+=N\!\left(\begin{pmatrix}0\\0\end{pmatrix},\begin{pmatrix}2&0\\0&2\end{pmatrix}\right)
+\qquad\text{independent samples no cov.}
+\]
+\[
+\log(s_1^2)-\log(s_2^2)=\log(s_1^2)-\log(\sigma^2)-\log(s_2^2)+\log(\sigma^2)
+=\log\!\left(\frac{s_1^2}{\sigma^2}\right)-\log\!\left(\frac{s_2^2}{\sigma^2}\right)
+\]
+\[
+T=\sqrt{\frac{n_2}{n_1+n_2}}\cdot\sqrt{n_1}\log\!\left(\frac{s_1^2}{\sigma^2}\right)-\sqrt{\frac{n_1}{n_1+n_2}}\,\sqrt{n_2}\log\!\left(\frac{s_2^2}{\sigma^2}\right)
+\]
+\[
+\E(T)=\sqrt{\frac{n_2}{n_1+n_2}}\cdot\E\!\left(\sqrt{n_1}\log\frac{s_1^2}{\sigma^2}\right)-\sqrt{\frac{n_1}{n_1+n_2}}\,\E\!\left(\sqrt{n_2}\log\frac{s_2^2}{\sigma^2}\right)=0
+\]
+\[
+\Var(T)=\frac{n_2}{n_1+n_2}\Var\!\left(\sqrt{n_1}\log\frac{s_1^2}{\sigma^2}\right)+\frac{n_1}{n_1+n_2}\Var\!\left(\sqrt{n_2}\log\frac{s_2^2}{\sigma^2}\right)=2\cdot\frac{n_2+n_1}{n_1+n_2}=2
+\]
+
+\subq{(b)}
+$P(T\ge z_{0.95}\sqrt2)=0.05$
+\[
+F(n_1-1,n_2-1)=\frac{s_1^2/(n_1-1)}{s_2^2/(n_2-1)}\ \text{ as } n_1,n_2\to\infty\ \to\ \frac{s_1^2}{s_2^2}\cdot c\sim\frac{s_1^2}{s_2^2}
+\]
+$P(F>q_{0.95})$ at large $n$
+\[
+\Rightarrow P\!\left(\frac{s_1^2}{s_2^2}>q_{0.95}\right)=P\!\left(\sqrt{\frac{n_1n_2}{n_1+n_2}}\log\frac{s_1^2}{s_2^2}>\sqrt{\frac{n_1n_2}{n_1+n_2}}\log(q_n)\right)
+\]
+\[
+P\!\left(T>\sqrt{\frac{n_1n_2}{n_1+n_2}}\log(q_n)\right)=0.05
+\]
+This is equivalent to $P(T>z_{0.95}\sqrt2)=0.05$ as they have same probability as long as $n_1$ and $n_2\to\infty$.
+
+\subq{(c)}
+\[
+\E(T)=\sqrt{\frac{n_2}{n_1+n_2}}\,\E\!\left(\sqrt{n_1}\log\frac{s_1^2}{\sigma^2}\right)-\sqrt{\frac{n_1}{n_1+n_2}}\,\E\!\left(\sqrt{n_2}\log\frac{s_2^2}{\sigma^2}\right)
+\]
+\[
+y_{ji}=\mu+\sigma z_{ji}
+\]
+\[
+s_1^2=\frac1{n_1-1}\sum\Big(\mu+\sigma z_{ji}-\frac1{n_1}\sum\mu+\sigma z_{ji}\Big)^2=(\sigma z_{ji}-\sigma\bar z_j)^2=\sigma^2\sum(z_{ji}-\bar z_j)^2\Big/(n_1-1)
+\]
+\[
+\frac{s_1^2}{\sigma^2}=\frac{\sum(z_{ji}-\bar z_j)^2}{n_1-1}=\frac{\sum z_{ji}^2-n_1\bar z_j^2}{n_1-1}=\frac{n_1}{n_1-1}\left(\frac1{n_1}\sum z_i^2-\bar z^2\right)
+\]
+$\dfrac{s_1^2}{\sigma^2}$ as $n_1\to\infty$: $\bar z=\dfrac1{n_1}\sum z_i$, $\ \dfrac1n\sum z_i^2\to1$ as $\int y^2\,dF_0(y)=1$
+\[
+\frac{n_1}{n_1-1}\left(1-\frac1{n_1}\right)=\frac{n_1-1}{n_1-1}=1,\qquad\frac{s^2}{\sigma^2}\xrightarrow{p}1
+\]
+\[
+\sqrt{n_1}\left(\frac{s_1^2}{\sigma^2}-1\right)=\sqrt{n_1}\left(\frac{n_1}{n_1-1}\Big(\frac1{n_1}\sum z_i^2-\bar z^2\Big)-1\right)\quad\text{as } n_1\to\infty
+\]
+\[
+\begin{aligned}
+\sqrt n\,\frac n{n+1}\left(\frac1n\sum z_i^2-\bar z^2-1\right)&=\sqrt n\Big(\frac1n\sum z_i^2-\bar z^2\Big)+\frac1{n+1}\Big(\sum z_i^2-\bar z^2\Big)-1\\
+&=\sqrt n\,\frac1n\sum z_i^2-\sqrt n-\sqrt n\,\bar z^2+\frac{\sqrt n}{n+1}\Big(\sum z_i^2-\bar z^2\Big)
+\end{aligned}
+\]
+$\sqrt n\,\bar z^2\to\sqrt n\cdot0\to0$ as $n$ increases
+\[
+\frac{\sqrt n}{n+1}\Big(\sum z_i^2-\bar z^2\Big)=\frac{\sqrt n}{n+1}\cdot1-0=\frac{\sqrt n}{n+1}\quad\text{which}\to0\text{ as } n\text{ increases}
+\]
+thus $\E\!\left(\sqrt n\,\dfrac{s_1^2}{\sigma^2}-1\right)=\sqrt n\Big(\dfrac1n\sum z_i^2-1\Big)\to\sqrt n(1-1)=0$
+\[
+\Var\!\left(\sqrt n\,\frac{s_1^2}{\sigma^2}-1\right)=\Var\!\left(\frac1{\sqrt n}\sum z_i^2-1\right)=\frac1n\Var\Big(\sum z_i^2\Big)=\frac1n\cdot n(\kappa-1)
+\]
+\[
+\Var\!\left(\sqrt n\,\frac{s_1^2}{\sigma^2}-1\right)=\kappa-1
+\]
+delta method
+\[
+\sqrt n\log\!\left(\frac{s_1^2}{\sigma^2}-1\right)=\sqrt n\log\!\left(\frac{s_1^2}{\sigma^2}\right)\to N\!\left(0,\Big(\frac{\partial g(\theta)}{\partial\theta}\Big)^{2}(\kappa-1)\right)
+\]
+\[
+\left(\frac{\partial g(\theta)}{\partial\theta}\right)^2=\left(\frac1\theta\right)^2=\left(\frac11\right)^2=1
+\]
+\[
+\sqrt{n_1}\log\!\left(\frac{s_1^2}{\sigma^2}\right)\Rightarrow N(0,\kappa-1)
+\]
+\[
+\E(T)=\sqrt{\frac{n_2}{n_1+n_2}}\cdot0+\sqrt{\frac{n_2}{n_1+n_2}}\cdot0=0
+\]
+\[
+\Var(T)=\left(\frac{n_1}{n_1+n_2}+\frac{n_2}{n_1+n_2}\right)(\kappa-1)=\kappa-1
+\]
+
+\subq{(d)}
+\[
+P(T>1.645\sqrt2)=P\!\left(Z>\frac{1.645\cdot\sqrt2}{2}\right)=0.122
+\]
+we have a $12.2\%$ chance of rejecting the null if $\kappa=5$ is the true distribution.
+
+\subq{(e)}
+\ans{$p$-value robust to non-normality $=0.175,\qquad p$-value under normality $=0.047$}
+The p-value under normal assumptions shows that we would reject the null with 0.05 significance level, while the non-normality robust test shows we would not reject the null.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\problem{4}
+
+\subq{(a)}
+\[
+\sqrt n(\hat\beta-\beta)\xrightarrow{d}N\big(0,\sigma^2(\E(xx'))^{-1}\big)
+\]
+$\sigma^2=\Var(\epsilon_i\mid j_i)=1$ stated in problem.
+\[
+\E(xx')^{-1}\Rightarrow\E(j_ij_i')^{-1}=\Big(\frac1p\sum j_ij_i'\Big)^{-1}\Rightarrow p\cdot1
+\]
+$j$ is indicator which has $\E(I^2)=\E(I)=1/p$.
+\[
+\sqrt n(\hat\beta-\beta)\xrightarrow{d}N(0,p)
+\]
+
+\subq{(b)}
+\[
+\min\ \|y-Xb\|^2+\lambda\sum|b_j|
+\]
+\[
+\|y-Xb\|^2=\sum_j^{p}\sum_i^{n_j}(y_i-b_j)^2=\sum_j^{p}\sum_i^{n_j}(y_i-\hat\beta_j)^2+\sum_j^{p}n_j(\hat\beta_j-b_j)^2
+=\sum_j^{p}n_j(\hat\beta_j-b_j)^2+\sum\epsilon'\epsilon
+\]
+($\sum\epsilon'\epsilon$ can't minimize with $b_j$)
+\[
+\min\ \sum_j^{p}n_j(\hat\beta_j-b_j)^2+\lambda\sum|b_j|
+\]
+FOC $b_j$: $\quad-2n_j(\hat\beta_j-b_j)\pm\lambda=0\qquad 2n_j\hat\beta_j=2n_jb_j\pm\lambda$
+\[
+b_j=\hat\beta_j\pm\frac{\lambda}{2n_j}
+\]
+\[
+b_j^{LASSO}=\begin{cases}
+\hat\beta_j+\dfrac{\lambda}{2n_j} & \hat\beta_j<-\dfrac{\lambda}{2n_j}\\[3mm]
+\hat\beta_j-\dfrac{\lambda}{2n_j} & \hat\beta_j>\dfrac{\lambda}{2n_j}\\[3mm]
+0 & \text{otherwise}
+\end{cases}
+\]
+
+\subq{(c)}
+$\lambda=\sqrt n$
+\[
+\E\big(\sqrt n(\hat\beta_{Lasso}-\beta)\big)=\sqrt n\Big(\hat\beta_j-\frac{\sqrt n}{2n_j}-\beta\Big)=-\sqrt n\cdot\frac{\sqrt n}{2n_j}=-\frac{n}{2n_j}=-\frac p2
+\]
+$\dfrac n{n_j}=\dfrac1p$, $\quad p$: chance we select $j$: $\dfrac{n_j}{n}=\dfrac{A_j}{\text{all aliens}}=p$
+\[
+\Var\big(\sqrt n(\hat\beta_{Lasso}-\beta)\big)=\Var\big(\sqrt n(\hat\beta_j-\beta)\big)-\Var\Big(\sqrt n\cdot\frac{\sqrt n}{2n_j}\Big)\to\Var\big(\sqrt n(\hat\beta_j-\beta)\big)=p
+\]
+the second term $\to0$.
+\[
+\sqrt n(\hat\beta_{Lasso}-\beta)\xrightarrow{d}N\Big(-\frac p2,\,p\Big)
+\]
+$\lambda=n^{1/4}$
+
+Var is unchanged but expectation will change
+\[
+\E\big(\sqrt n(\hat\beta_{Lasso}-\beta)\big)=-\sqrt n\cdot\frac{n^{1/4}}{2n_j}=\frac{n^{3/4}}{2n_j}=\frac p2\cdot\frac1{n^{1/4}}\to0
+\]
+\[
+\sqrt n(\hat\beta_{Lasso}-\beta)\xrightarrow{d}N(0,p)
+\]
+$\lambda=n^{3/4}$
+\[
+\E\big(\sqrt n(\hat\beta_{Lasso}-\beta)\big)=-\sqrt n\cdot\frac{n^{3/4}}{2n_j}=\frac{n^{5/4}}{2n_j}=n^{1/4}\cdot\frac p2\to\infty
+\]
+\[
+\sqrt n(\hat\beta_{Lasso}-\beta)\xrightarrow{d}N(\infty,p)
+\]
+
+\subq{(d)}
+$\hat\beta_{Lasso}=0$ when $\hat\beta\le\left|\dfrac{\lambda}{2n_j}\right|=\left|\dfrac{\sqrt n}{2n_j}\right|=\left|\dfrac p2\right|$
+\[
+P\!\left(-\frac{\sqrt n}{2n_j}\le\hat\beta\le\frac{\sqrt n}{2n_j}\right)=P\!\left(-\frac p2\le\sqrt n\hat\beta\le\frac p2\right)
+\]
+$\sqrt n(\hat\beta-\beta)\to\sqrt n(\hat\beta)$ as $\beta=0$ if useless alien
+
+for having $k$ useless aliens we need $\left(P\!\left(-\dfrac p2\le\sqrt n\hat\beta\le\dfrac p2\right)\right)^k$
+\[
+P\!\left(-\frac p2\le\sqrt n\hat\beta\le\frac p2\right)=\left(2\Phi\!\left(\frac p2\cdot\frac1{\sqrt p}\right)-1\right)=2\Phi\!\left(\frac{\sqrt p}{2}\right)-1
+\]
+$\Phi$ is normal cdf
+\ans{asymptotic probability of $k$ useless aliens is $\left(2\Phi\!\left(\dfrac{\sqrt p}{2}\right)-1\right)^k$}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\problem{5}
+
+No. Strict stationarity means the joint distribution of a sequence doesn't depend on time $t$. The sequence can have auto-correlation and heteroskedasticity in this case. The distribution of $(y_t,x_t)$ is constant, but if we condition the distribution on $(y_{t-1},x_{t-1})$ then the distribution on $y_t\mid x_t$ can vary. Stationarity only enforces that the variance-covariance matrix doesn't depend on $t$, but it can depend on $t-1$ information if conditioned on it.
+
+\appendix
+\section*{Appendix: Code}
+
+\subsection*{Setup}
+\begin{lstlisting}
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+import statsmodels.api as sm
+\end{lstlisting}
+\subsection*{Problem 1(a)}
+\begin{lstlisting}
+wages = pd.read_csv("ps1small.csv")
+
+wages['logwage'] = np.log(wages['wage'])
+wages['eduxage'] = 'd'+ wages['education'].astype(str) + wages['age'].astype(str)
+dummies = pd.get_dummies(wages['eduxage'], dtype = int)
+wages = pd.concat([wages, dummies], axis=1)
+wages.head()
+\end{lstlisting}
+\begin{lstlisting}
+model = sm.OLS(endog= wages['logwage'], exog=wages[dummies.columns]).fit()
+coefficients = model.params
+standard_errors = model.bse
+alpha = pd.DataFrame({'Coefficient': coefficients, 'Standard Error': standard_errors})
+alpha
+\end{lstlisting}
+\subsection*{Problem 1(b)}
+\begin{lstlisting}
+R  = np.zeros((26,30))
+q = np.zeros((26,1))
+
+def col(e, a):
+    # column index for education level e and age a
+    return (e - 12) * 5 + (a - 26)   
+
+#alpha_{e,a-1} - 2*alpha_{e,a} + alpha_{e,a+1} = 0
+r = 0
+for e in range(12, 18):
+    for a in (27, 28, 29):
+        R[r, col(e, a-1)] = 1
+        R[r, col(e, a)]   = -2
+        R[r, col(e, a+1)] = 1
+        r += 1
+
+#(alpha_{e-1,27} - alpha_{e-1,26}) - 2*(alpha_{e,27} - alpha_{e,26}) + (alpha_{e+1,27} - alpha_{e+1,26}) = 0
+for r in range(18, 22):
+    e = 13 + (r - 18)     
+    R[r, col(e-1, 27)] = 1
+    R[r, col(e-1, 26)] = -1
+    R[r, col(e, 27)]   = -2
+    R[r, col(e, 26)]   = 2
+    R[r, col(e+1, 27)] = 1
+    R[r, col(e+1, 26)] = -1
+
+#alpha_{e-1,26} - 2*alpha_{e,26} + alpha_{e+1,26} = 0
+for r in range(22, 26):
+    e = 13 + (r - 22)
+    R[r, col(e-1, 26)] = 1
+    R[r, col(e, 26)]   = -2
+    R[r, col(e+1, 26)] = 1
+\end{lstlisting}
+\begin{lstlisting}
+wald_test = model.wald_test((R,q), use_f = True)
+F = wald_test.fvalue
+p_value = wald_test.pvalue
+print("F-statistic:", F)
+print("p-value:", p_value)
+\end{lstlisting}
+\subsection*{Problem 3(d)}
+\begin{lstlisting}
+from scipy import stats
+kappa = 5
+# T ~ N(0, kappa-1) under the null, but the test uses the N(0,2) critical value 1.645*sqrt(2)
+size = 1 - stats.norm.cdf(1.645*np.sqrt(2) / np.sqrt(kappa-1))
+print(f'actual asymptotic size when kappa=5: {size:.4f}')
+\end{lstlisting}
+\subsection*{Problem 3(e)}
+\begin{lstlisting}
+from scipy import stats
+\end{lstlisting}
+\begin{lstlisting}
+wage = pd.read_excel('wage.xlsx')
+wage['logwage'] = np.log(wage['wage'])
+wage.head()
+\end{lstlisting}
+\begin{lstlisting}
+wage_males = wage[wage['male']==1]
+wage_females = wage[wage['male']==0]
+
+n1 = len(wage_females)
+n2 = len(wage_males)
+
+y1 = wage_females['logwage']
+y2 = wage_males['logwage']
+y1_bar = np.mean(y1)
+y2_bar = np.mean(y2)
+
+s1 = np.sum((y1-y1_bar)**2) / (n1-1)
+s2 = np.sum((y2-y2_bar)**2) / (n2-1)
+
+T = np.sqrt(n1*n2/ (n1+n2)) * (np.log(s1) - np.log(s2))
+
+k_hat = (n1+n2)* (np.sum((y1-y1_bar)**4) + np.sum((y2-y2_bar)**4)) / (np.sum((y1-y1_bar)**2) + np.sum((y2-y2_bar)**2)) **2
+
+z = T / np.sqrt(k_hat-1)
+p_robust = 1- stats.norm.cdf(z)
+
+F = s1/s2
+p_normal = 1 - stats.f.cdf(F,n1-1,n2-1)
+
+print(f'p-value robust to non-normality {p_robust}')
+print(f'p value under normality {p_normal}')
+\end{lstlisting}
+
+\end{document}
