@@ -68,3 +68,14 @@ p_value = 1 - chi2.cdf(chi2_stat, df=l - k)
 print(f'Sargan statistic: {chi2_stat}, p-value: {p_value}')
 # %%
 # Since the exogeneity test p-value is greater than 0.05, we fail to reject the null hypothesis that log change in real disposable income per capita is not exogenous. Since the Sargan test p-value is greater than 0.05, we fail to reject the null hypothesis that the instruments are not exogenous. We can conclude that the instruments are valid and the 2SLS results are consistent.
+#%%
+spdata = pd.read_excel('SP500Index.xlsx')
+spdata.head()
+# %%
+spdata['xt'] = np.log(spdata.iloc[:, 1] / spdata.iloc[0,1])
+delta_ml = spdata['xt'].iloc[-1]/len(spdata['xt'])
+sigma_ml = np.sqrt(np.sum((spdata['xt'][:-1] - delta_ml - spdata['xt'].shift(1)[:-1]) ** 2) / len(spdata['xt'][:-1]))
+print(f'MLE estimates: delta = {delta_ml}, sigma = {sigma_ml}')
+# %%
+# The estimated drift for the SP500 is 0.5% every month with a volaitlity of 4%. SO the drift is very small, but the volatility is quite high.
+#%%
