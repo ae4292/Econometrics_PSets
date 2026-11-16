@@ -73,8 +73,11 @@ spdata = pd.read_excel('SP500Index.xlsx')
 spdata.head()
 # %%
 spdata['xt'] = np.log(spdata.iloc[:, 1] / spdata.iloc[0,1])
-delta_ml = spdata['xt'].iloc[-1]/len(spdata['xt'])
-sigma_ml = np.sqrt(np.sum((spdata['xt'][:-1] - delta_ml - spdata['xt'].shift(1)[:-1]) ** 2) / len(spdata['xt'][:-1]))
+xt = spdata['xt'].iloc[1:]                   # x_t, t = 1..T
+xt_1 = spdata['xt'].shift(1).iloc[1:]        # x_{t-1}
+T = len(xt)
+delta_ml = spdata['xt'].iloc[-1] / T
+sigma_ml = np.sqrt(np.sum((xt - delta_ml - xt_1) ** 2) / T)
 print(f'MLE estimates: delta = {delta_ml}, sigma = {sigma_ml}')
 # %%
 # The estimated drift for the SP500 is 0.5% every month with a volaitlity of 4%. SO the drift is very small, but the volatility is quite high.

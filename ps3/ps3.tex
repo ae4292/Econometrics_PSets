@@ -1,0 +1,280 @@
+\documentclass[11pt]{article}
+\usepackage{../econpset}
+
+\begin{document}
+\psetheader{Problem Set 3}{Econometrics}{Code: \url{https://github.com/ae4292/Econometrics_PSets}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\problem{1}
+
+\subq{(a)}
+Assumptions:
+\begin{itemize}[nosep]
+\item[IV0] $(y_i,x_i,z_i)$ i.i.d.
+\item[IV1] $\E(z_iz_i')<\infty$ nonsingular, $\E(z_ix_i')$ full column rank
+\item[IV2] $\E(\varepsilon_i\mid z_i)=0$, so IV2$'$: $\E(z_i\varepsilon_i)=0$
+\item[IV3] $\E(\varepsilon_i^2\mid z_i)=\sigma^2$
+\end{itemize}
+With $\hat W=P_ZX$ and $P_Z=Z(Z'Z)^{-1}Z'$,
+\[
+\begin{aligned}
+\hat\beta_{2SLS}&=(\hat W'X)^{-1}\hat W'y=(X'P_ZX)^{-1}X'P_Zy\\
+&=(X'P_ZX)^{-1}X'P_Z(X\beta+\varepsilon)=\beta+(X'P_ZX)^{-1}X'P_Z\varepsilon
+\end{aligned}
+\]
+\[
+\hat\beta_{2SLS}-\beta=\big(X'Z(Z'Z)^{-1}Z'X\big)^{-1}X'Z(Z'Z)^{-1}Z'\varepsilon
+\]
+By the LLN
+\[
+\begin{aligned}
+&\frac1nZ'\varepsilon=\frac1n\sum z_i\varepsilon_i\xrightarrow{p}0,\qquad
+\frac1nX'Z\xrightarrow{p}\E(x_iz_i'),\\[1mm]
+&\frac1nZ'X\xrightarrow{p}\E(z_ix_i'),\qquad
+\Big(\frac1nZ'Z\Big)^{-1}\xrightarrow{p}\big(\E(z_iz_i')\big)^{-1}.
+\end{aligned}
+\]
+Since $Z'\varepsilon$ goes to zero and all other values are finite, $\hat\beta_{2SLS}\xrightarrow{p}\beta$ so it is consistent.
+
+\subq{(b)}
+\[
+\sqrt n(\hat\beta_{2SLS}-\beta)\xrightarrow{d}N\!\Big(0,\ (D'C^{-1}D)^{-1}D'C^{-1}VC^{-1}D(D'C^{-1}D)^{-1}\Big)
+\]
+\[
+C=\E(z_iz_i'),\qquad D=\E(z_ix_i'),\qquad V=\Var(z_i\varepsilon_i)=\sigma^2C .
+\]
+
+\subq{(c)}
+Let $\hat Q=Z'\hat\varepsilon$ and $R=\hat Q'\hat Q=\sum\hat\varepsilon_i^2z_iz_i'$. The minimum $\chi^2$ estimator is
+\[
+\hat\beta_{MCS}=\arg\min_b\ (y-Xb)'Z\,R^{-1}Z'(y-Xb).
+\]
+Write $R^{-1}=A'A$. Then
+\[
+(y-Xb)'Z A'A Z'(y-Xb)=\|AZ'y-AZ'Xb\|^2,
+\]
+which is the OLS criterion with $\tilde y=AZ'y$ and $\tilde x=AZ'X$, so $b=(\tilde x'\tilde x)^{-1}\tilde x'\tilde y$:
+\[
+\hat\beta_{MCS}=\big(X'ZA'AZ'X\big)^{-1}X'ZA'AZ'y=\big(X'ZR^{-1}Z'X\big)^{-1}X'ZR^{-1}Z'y .
+\]
+Substituting $y=X\beta+\varepsilon$,
+\[
+\hat\beta_{MCS}-\beta=\Big(\tfrac1nX'Z\big(\tfrac1nR\big)^{-1}\tfrac1nZ'X\Big)^{-1}\tfrac1nX'Z\Big(\tfrac1nR\Big)^{-1}\tfrac1nZ'\varepsilon
+\]
+where
+\[
+\begin{aligned}
+&\tfrac1nX'Z\xrightarrow{p}\E(x_iz_i'),\qquad
+\tfrac1nR=\tfrac1n\sum\hat\varepsilon_i^2z_iz_i'\xrightarrow{p}\E(\varepsilon_i^2z_iz_i'),\\[1mm]
+&\tfrac1nZ'X\xrightarrow{p}\E(z_ix_i'),\qquad
+\tfrac1n\sum z_i\varepsilon_i\xrightarrow{p}0 .
+\end{aligned}
+\]
+The last term goes to zero and the other terms are finite, so $\hat\beta_{MCS}\xrightarrow{p}\beta$ and
+\[
+\sqrt n(\hat\beta_{MCS}-\beta)\xrightarrow{d}N\!\Big(0,\ (D'C^{-1}D)^{-1}D'C^{-1}VC^{-1}D(D'C^{-1}D)^{-1}\Big),
+\]
+\[
+D=\E(z_ix_i'),\qquad C=\E(\varepsilon_i^2z_iz_i')=\E(\sigma_i^2z_iz_i').
+\]
+
+\subq{(d)}
+With this weighting $V=\Var(z_i\varepsilon_i)=\E(\varepsilon_i^2z_iz_i')=C$, so the asymptotic variance of $\hat\beta_{MCS}$ is
+\[
+(D'C^{-1}D)^{-1}D'C^{-1}CC^{-1}D(D'C^{-1}D)^{-1}=(D'C^{-1}D)^{-1},
+\]
+that is $\sqrt n(\hat\beta_{MCS}-\beta)\xrightarrow{d}N\big(0,(D'C^{-1}D)^{-1}\big)$.
+\ans{This asymptotic variance is less than the asymptotic variance of $\hat\beta_{2SLS}$ if we assume heteroskedasticity.}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\problem{2}
+
+\subq{(a)}
+Regress consumption per capita (nondurables plus services, divided by population) on a constant and four lags, and test Hall's hypothesis $\beta_2=\beta_3=\beta_4=0$ (the coefficients on lags $2,3,4$) with an $F$ test.
+\ans{$p\text{-value}=2.6\times10^{-5}$}
+We reject Hall's hypothesis that $\beta_2=\beta_3=\beta_4=0$ at the 5\% significance level since the $p$-value is less than $0.05$.
+
+\subq{(b)}
+The setup from Campbell and Mankiw has an endogeneity issue since current income is a part of permanent income. Thus the remainder is correlated with the error term. This will lead to inconsistent estimate of $\gamma_1$.
+
+\subq{(c)}
+2SLS estimate of
+\[
+\log\frac{C_t}{C_{t-1}}=\gamma_0+\gamma_1\log\frac{Y_t}{Y_{t-1}}+\varepsilon_t,
+\]
+with $C$ consumption per capita and $Y$ real disposable income per capita. Instruments: $\log(C_{t-2}/C_{t-3})$, $\log(C_{t-3}/C_{t-4})$, $\log(C_{t-4}/C_{t-5})$, $\log(C_{t-5}/C_{t-6})$. Standard errors in parentheses are White (heteroskedasticity robust):
+\begin{center}
+\begin{tabular}{c|cc}
+ & $\hat\gamma_0$ & $\hat\gamma_1$\\\hline
+estimate & 0.0026 & 0.437\\
+White s.e. & (0.0012) & (0.203)\\
+$p$-value & 0.024 & 0.031
+\end{tabular}
+\end{center}
+$\gamma_0$ is small, but statistically significant. $\gamma_1$ is $0.437$ and statistically significant.
+\ans{Thus, with this 2SLS regression the estimated fraction of consumers that spend current income is $0.437$.}
+
+\subq{(d)}
+Test of exogeneity of $\log(Y_t/Y_{t-1})$ (robust regression-based test, $H_0$: exogenous):
+\ans{$p\text{-value}=0.286$}
+Since the exogeneity test $p$-value is greater than $0.05$, we fail to reject the null hypothesis that log change in real disposable income per capita is not exogenous.
+
+Sargan test of overidentifying restrictions with $l-k=3$ degrees of freedom ($H_0$: the instruments are exogenous):
+\[
+S=n\,\frac{\hat\varepsilon'W(W'W)^{-1}W'\hat\varepsilon}{\hat\varepsilon'\hat\varepsilon}=7.74\ \xrightarrow{d}\ \chi^2(l-k),\qquad p\text{-value}=0.052 .
+\]
+Since the Sargan test $p$-value is greater than $0.05$, we fail to reject the null hypothesis that the instruments are not exogenous. We can conclude that the instruments are valid and the 2SLS results are consistent.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\problem{3}
+
+\subq{(a)}
+$x_t$ only depends on $x_{t-1}$:
+\[
+f_{x_t\mid x_{t-1},\dots,x_0}(x_t\mid x_{t-1},\dots,x_0)=f_{x_t\mid x_{t-1}}(x_t\mid x_{t-1}),
+\qquad
+f_{x_t\mid x_{t-1}}(x_t\mid x_{t-1})=N(\delta+x_{t-1},\sigma^2)
+\]
+\[
+\E(\delta+x_{t-1}+\eta_t\mid x_{t-1})=\delta+x_{t-1},\qquad\Var(\eta_t\mid x_{t-1})=\sigma^2 .
+\]
+For the first observation $f(x_1\mid x_0)=N(\delta,\sigma^2)$ and
+\[
+f(x_2,x_1\mid x_0)=f(x_2\mid x_1,x_0)\,f(x_1\mid x_0)=f(x_2\mid x_1)\,f(x_1\mid x_0)
+\]
+\[
+f(x_T,\dots,x_1\mid x_0)=\prod_{t=1}^Tf_{x_t\mid x_{t-1}}(x_t\mid x_{t-1})=\prod_{t=1}^Tf_{x_t\mid x_{t-1},\dots,x_0}(x_t\mid x_{t-1},\dots,x_0).
+\]
+$x_t$ only depends on $x_{t-1}$, but we can add $x_{t-2},\dots,x_0$ and it is still the same.
+
+\subq{(b)}
+With $f_{x_t\mid x_{t-1}}=N(\delta+x_{t-1},\sigma^2)$ the log likelihood is
+\[
+L=-\frac T2\ln(2\pi)-\frac T2\ln(\sigma^2)-\frac{\sum_{t=1}^T(x_t-\delta-x_{t-1})^2}{2\sigma^2}
+\]
+\[
+\frac{\partial L}{\partial\delta}=\frac{\sum_{t=1}^T(x_t-\delta-x_{t-1})}{\sigma^2}=0
+\ \Rightarrow\
+\hat\delta_{ML}=\frac1T\sum_{t=1}^T(x_t-x_{t-1})=\frac{x_T-x_0}{T}=\frac{x_T}{T}
+\]
+\[
+\frac{\partial L}{\partial\sigma^2}=-\frac T{2\sigma^2}+\frac{\sum_{t=1}^T(x_t-\delta-x_{t-1})^2}{2\sigma^4}=0
+\ \Rightarrow\
+\hat\sigma^2_{ML}=\frac1T\sum_{t=1}^T(x_t-\hat\delta-x_{t-1})^2 .
+\]
+
+\subq{(c)}
+\[
+\Var(\hat\delta_{ML})=\Var\Big(\frac{x_T}{T}\Big)=\frac1{T^2}\Var(x_T)=\frac1{T^2}\Var\Big(\sum_{t=1}^T\eta_t\Big)=\frac{T\sigma^2}{T^2}=\frac{\sigma^2}T=\frac1T
+\]
+Cram\'er--Rao lower bound:
+\[
+I(\theta_0)=-\E\Big(\frac{\partial^2}{\partial\theta\,\partial\theta'}\log f(x;\theta_0)\Big)
+=\frac{\partial}{\partial\delta}\Big(-\frac{\sum_{t=1}^T(x_t-\delta-x_{t-1})}{\sigma^2}\Big)=\sum\frac1{\sigma^2}=\frac T{\sigma^2}
+\]
+\[
+\Var(\hat\delta_{CR})=\Big(\frac T{\sigma^2}\Big)^{-1}\geq\frac{\sigma^2}T=\frac1T .
+\]
+\ans{This is equal to the estimator variance found in (b): $\hat\delta_{ML}$ attains the bound.}
+
+\subq{(d)}
+Using the monthly S\&P 500 index data with $x_t=\log(P_t/P_0)$, the ML estimates from (b) are
+\ans{$\hat\delta_{ML}=0.0055,\qquad\hat\sigma_{ML}=0.042$}
+The estimated drift for the S\&P 500 is $0.5\%$ every month with a volatility of $4\%$. So the drift is very small, but the volatility is quite high.
+
+\subq{(e)}
+Regression $y_t=\alpha+\beta x_t+\varepsilon_t$:
+\begin{itemize}[nosep]
+\item[GM1] $\mathrm{Rank}(X)=k=2$ \checkmark
+\item[GM2] $\E(y_t\mid x_t)=\alpha+\beta x_t$ \checkmark
+\item[GM3] $\Var(y_t\mid x_t)=\Var(\varepsilon_t)=\gamma^2I$ \checkmark
+\end{itemize}
+$(y_t,x_t)$ are not i.i.d.\ across $t$, as $x_t$ depends on $x_{t-1}$, and thus $(y_t,x_t)$ can't be i.i.d. Use
+\[
+\hat\beta=(X'X)^{-1}X'y,\qquad\Var(\hat\beta\mid X)=\sigma^2(X'X)^{-1}=\gamma^2(X'X)^{-1}
+\]
+$H_0:\beta=1$ using a $5\%$ significance level and $T=3$:
+\[
+t=\frac{\hat\beta-1}{\sqrt{\widehat{\Var}(\hat\beta\mid X)}},\qquad t_{T-2,\,0.975}=t_{1,\,0.975}=12.706 .
+\]
+Check if $t>12.706$ or $t<-12.706$, then reject the null if true.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\problem{4}
+
+\subq{(a)}
+$P_0=\Pr(y_i=0)=e^{-\lambda}$. The log likelihood is
+\[
+L(\lambda,y)=\sum_{i=1}^{1000}\log\Big(e^{-\lambda}\frac{\lambda^{y_i}}{y_i!}\Big)=\sum_{i=1}^{1000}\big(-\lambda+y_i\log\lambda-\log(y_i!)\big)
+\]
+\[
+\frac{\partial L}{\partial\lambda}=\sum_{i=1}^{1000}\Big(-1+\frac{y_i}\lambda\Big)=-1000+\frac1\lambda\sum y_i=0
+\ \Rightarrow\
+\hat\lambda_{ML}=\frac{\sum_{i=1}^ny_i}{n}=\bar y\xrightarrow{p}\lambda
+\]
+\[
+I(\lambda_0)=-\E\Big(\sum\frac{-y_i}{\lambda^2}\Big)=\frac1{\lambda^2}\E\Big(\sum y_i\Big)=\frac{n\lambda}{\lambda^2}=\frac n\lambda
+\]
+\[
+\sqrt n(\hat\lambda_{ML}-\lambda_0)\xrightarrow{d}N\Big(0,\,n\cdot\frac1n\lambda\Big)=N(0,\lambda)
+\]
+and by the delta method with $g(\lambda)=e^{-\lambda}$, $g'(\lambda)^2=e^{-2\lambda}$,
+\ans{$\sqrt n(\hat P_0-P_0)\xrightarrow{d}N\big(0,(g'(\lambda))^2\lambda\big)=N\big(0,e^{-2\lambda}\lambda\big)$}
+
+\subq{(b)}
+If $y_i$ is in fact negative binomial then $\hat\lambda=\bar y\xrightarrow{p}\E(y_i)=\dfrac{r(1-p)}p$, so
+\[
+\hat P_0=e^{-\hat\lambda}\xrightarrow{p}e^{-r(1-p)/p}.
+\]
+But the true probability is
+\[
+P_0=\Pr(y=0)=\binom{r-1}{r-1}(1-p)^0p^r=p^r .
+\]
+\ans{$p^r$ is not the same as $e^{-r(1-p)/p}$ when using MLE with the wrong specification.}
+
+\subq{(c)}
+\[
+\min_\lambda d(g_{r,p},f_\lambda)=\min_\lambda\sum_{y=0}^\infty g_{r,p}(y)\log g_{r,p}(y)-\log f_\lambda(y)
+\]
+which is the same as $\max\ \log f_\lambda(y)$ (the first term doesn't depend on $\lambda$), so $\lambda^*=\bar y\xrightarrow{p}r(1-p)/p$. This is the same value for $\lambda$ as in (b) as $n\to\infty$.
+
+\subq{(d)}
+\[
+\frac{\partial}{\partial\lambda}\log f_\lambda(y_i)=\frac1\lambda\sum y_i-n,\qquad
+\frac{\partial^2}{\partial\lambda^2}\log f_\lambda(y_i)=-\frac{\sum y_i}{\lambda^2}
+\]
+\[
+\Var\Big(\frac{\sum y_i}\lambda\Big)=\frac1{\lambda^2}\Var\Big(\sum y_i\Big)=\frac n{\lambda^2}\Var(y_i)=\frac n{\lambda^2}\cdot\frac{r(1-p)}{p^2}
+\]
+\[
+-\E\Big(-\frac1{\lambda^2}\sum y_i\Big)=\frac1{\lambda^2}\,n\,\frac{r(1-p)}p
+\]
+\ans{$\Var\Big(\dfrac{\partial}{\partial\lambda}\log f_\lambda(y)\Big)\Big|_{p}\neq-\E\Big(\dfrac{\partial^2}{\partial\lambda^2}\log f_\lambda(y)\Big)$}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\problem{5}
+
+\subq{(a)}
+$H_0:\ \beta_M\le\beta_W$ against $H_1:\ \beta_M>\beta_W$, with
+\[
+\hat\beta=\begin{pmatrix}64\\63\end{pmatrix},\qquad X'X=\begin{pmatrix}100&0\\0&100\end{pmatrix}=100\,I_2,\qquad\sigma^2=100 .
+\]
+\[
+\begin{aligned}
+LR&=\min_b\ \frac{(y-Xb)'(y-Xb)}{\sigma^2}=\min_b\ \frac{X'X}{\sigma^2}(\hat\beta-b)'(\hat\beta-b)\\
+&=\min_b\ (\hat\beta-b)'(\hat\beta-b)=\min_b\ (64-b)^2+(63-b)^2
+\end{aligned}
+\]
+\[
+b=\frac{64+63}2=63.5,\qquad LR=(0.5)^2+(0.5)^2=0.5 .
+\]
+
+\subq{(b)}
+$\chi^2(1)_{0.90}=2.706$, and $2.706>0.5$, thus we fail to reject the null.
+
+\subq{(c)}
+\ans{$p=\tfrac12P\big(\chi^2(1)>0.5\big)=0.24$}
+
+\end{document}
